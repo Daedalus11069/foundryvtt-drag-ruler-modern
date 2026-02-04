@@ -1,5 +1,5 @@
 {
-	"drag-ruler": {
+	"drag-ruler-modern": {
 		"dependencies": {
 			"ok": "Ok",
 			"terrain-ruler": {
@@ -44,6 +44,14 @@
 			"moveWithoutAnimation": {
 				"name": "Desativar animação de token",
 				"hint": "Ao ser segurado ao soltar um token, o token se moverá para o local de destino sem animação."
+			},
+			"decreaseElevation": {
+				"name": "Diminuir elevação",
+				"hint": "Diminui a elevação dos tokens selecionados pela distância da grade da cena."
+			},
+			"increaseElevation": {
+				"name": "Aumentar elevação",
+				"hint": "Aumenta a elevação dos tokens selecionados pela distância da grade da cena."
 			}
 		},
 		"settings": {

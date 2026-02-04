@@ -7,7 +7,7 @@ import {
 import {SpeedProvider} from "./speed_provider.js";
 import {early_isGM} from "./util.js";
 
-export const settingsKey = "drag-ruler";
+export const settingsKey = "drag-ruler-modern";
 
 export const RightClickAction = Object.freeze({
 	CREATE_WAYPOINT: 0,
@@ -35,21 +35,21 @@ export function registerSettings() {
 	});
 
 	game.settings.register(settingsKey, "rightClickAction", {
-		name: "drag-ruler.settings.rightClickAction.name",
-		hint: "drag-ruler.settings.rightClickAction.hint",
+		name: "drag-ruler-modern.settings.rightClickAction.name",
+		hint: "drag-ruler-modern.settings.rightClickAction.hint",
 		config: true,
 		type: Number,
 		default: RightClickAction.DELETE_WAYPOINT,
 		choices: {
-			0: "drag-ruler.settings.rightClickAction.choices.create",
-			1: "drag-ruler.settings.rightClickAction.choices.delete",
-			2: "drag-ruler.settings.rightClickAction.choices.cancel",
+			0: "drag-ruler-modern.settings.rightClickAction.choices.create",
+			1: "drag-ruler-modern.settings.rightClickAction.choices.delete",
+			2: "drag-ruler-modern.settings.rightClickAction.choices.cancel",
 		},
 	});
 
 	game.settings.register(settingsKey, "autoStartMeasurement", {
-		name: "drag-ruler.settings.autoStartMeasurement.name",
-		hint: "drag-ruler.settings.autoStartMeasurement.hint",
+		name: "drag-ruler-modern.settings.autoStartMeasurement.name",
+		hint: "drag-ruler-modern.settings.autoStartMeasurement.hint",
 		scope: "client",
 		config: true,
 		type: Boolean,
@@ -57,8 +57,8 @@ export function registerSettings() {
 	});
 
 	game.settings.register(settingsKey, "useGridlessRaster", {
-		name: "drag-ruler.settings.useGridlessRaster.name",
-		hint: "drag-ruler.settings.useGridlessRaster.hint",
+		name: "drag-ruler-modern.settings.useGridlessRaster.name",
+		hint: "drag-ruler-modern.settings.useGridlessRaster.hint",
 		scope: "client",
 		config: true,
 		type: Boolean,
@@ -66,8 +66,8 @@ export function registerSettings() {
 	});
 
 	game.settings.register(settingsKey, "alwaysShowSpeedForPCs", {
-		name: "drag-ruler.settings.alwaysShowSpeedForPCs.name",
-		hint: "drag-ruler.settings.alwaysShowSpeedForPCs.hint",
+		name: "drag-ruler-modern.settings.alwaysShowSpeedForPCs.name",
+		hint: "drag-ruler-modern.settings.alwaysShowSpeedForPCs.hint",
 		scope: "world",
 		config: true,
 		type: Boolean,
@@ -75,8 +75,8 @@ export function registerSettings() {
 	});
 
 	game.settings.register(settingsKey, "showGMRulerToPlayers", {
-		name: "drag-ruler.settings.showGMRulerToPlayers.name",
-		hint: "drag-ruler.settings.showGMRulerToPlayers.hint",
+		name: "drag-ruler-modern.settings.showGMRulerToPlayers.name",
+		hint: "drag-ruler-modern.settings.showGMRulerToPlayers.hint",
 		scope: "world",
 		config: true,
 		type: Boolean,
@@ -84,8 +84,8 @@ export function registerSettings() {
 	});
 
 	game.settings.register(settingsKey, "enableMovementHistory", {
-		name: "drag-ruler.settings.enableMovementHistory.name",
-		hint: "drag-ruler.settings.enableMovementHistory.hint",
+		name: "drag-ruler-modern.settings.enableMovementHistory.name",
+		hint: "drag-ruler-modern.settings.enableMovementHistory.hint",
 		scope: "world",
 		config: true,
 		type: Boolean,
@@ -94,8 +94,8 @@ export function registerSettings() {
 
 	if (game.modules.get("routinglib")?.active) {
 		game.settings.register(settingsKey, "allowPathfinding", {
-			name: "drag-ruler.settings.allowPathfinding.name",
-			hint: "drag-ruler.settings.allowPathfinding.hint",
+			name: "drag-ruler-modern.settings.allowPathfinding.name",
+			hint: "drag-ruler-modern.settings.allowPathfinding.hint",
 			scope: "world",
 			config: true,
 			type: Boolean,
@@ -104,8 +104,8 @@ export function registerSettings() {
 		});
 
 		game.settings.register(settingsKey, "autoPathfinding", {
-			name: "drag-ruler.settings.autoPathfinding.name",
-			hint: "drag-ruler.settings.autoPathfinding.hint",
+			name: "drag-ruler-modern.settings.autoPathfinding.name",
+			hint: "drag-ruler-modern.settings.autoPathfinding.hint",
 			scope: "client",
 			config: early_isGM() || game.settings.get(settingsKey, "allowPathfinding"),
 			type: Boolean,
@@ -135,9 +135,9 @@ export function registerSettings() {
 	});
 
 	game.settings.registerMenu(settingsKey, "speedProviderSettings", {
-		name: "drag-ruler.settings.speedProviderSettings.name",
-		hint: "drag-ruler.settings.speedProviderSettings.hint",
-		label: "drag-ruler.settings.speedProviderSettings.button",
+		name: "drag-ruler-modern.settings.speedProviderSettings.name",
+		hint: "drag-ruler-modern.settings.speedProviderSettings.hint",
+		label: "drag-ruler-modern.settings.speedProviderSettings.button",
 		icon: "fas fa-tachometer-alt",
 		type: SpeedProviderSettings,
 		restricted: false,
@@ -148,8 +148,8 @@ class SpeedProviderSettings extends FormApplication {
 	static get defaultOptions() {
 		return mergeObject(super.defaultOptions, {
 			id: "drag-ruler-speed-provider-settings",
-			title: game.i18n.localize("drag-ruler.settings.speedProviderSettings.windowTitle"),
-			template: "modules/drag-ruler/templates/speed_provider_settings.html",
+			title: game.i18n.localize("drag-ruler-modern.settings.speedProviderSettings.windowTitle"),
+			template: "modules/drag-ruler-modern/templates/speed_provider_settings.html",
 			width: 600,
 		});
 	}
@@ -171,7 +171,7 @@ class SpeedProviderSettings extends FormApplication {
 			const id = provider.id.substring(dotPosition + 1);
 			if (type === "native") {
 				provider.selectTitle = game.i18n.localize(
-					"drag-ruler.settings.speedProviderSettings.speedProvider.choices.native",
+					"drag-ruler-modern.settings.speedProviderSettings.speedProvider.choices.native",
 				);
 			} else {
 				let name;
@@ -181,7 +181,7 @@ class SpeedProviderSettings extends FormApplication {
 					name = game.system.title;
 				}
 				provider.selectTitle = game.i18n.format(
-					`drag-ruler.settings.speedProviderSettings.speedProvider.choices.${type}`,
+					`drag-ruler-modern.settings.speedProviderSettings.speedProvider.choices.${type}`,
 					{name},
 				);
 			}
@@ -192,8 +192,8 @@ class SpeedProviderSettings extends FormApplication {
 
 		data.providerSelection = {
 			id: "speedProvider",
-			name: game.i18n.localize("drag-ruler.settings.speedProviderSettings.speedProvider.name"),
-			hint: game.i18n.localize("drag-ruler.settings.speedProviderSettings.speedProvider.hint"),
+			name: game.i18n.localize("drag-ruler-modern.settings.speedProviderSettings.speedProvider.name"),
+			hint: game.i18n.localize("drag-ruler-modern.settings.speedProviderSettings.speedProvider.hint"),
 			type: String,
 			choices: data.providers.reduce((choices, provider) => {
 				choices[provider.id] = provider.selectTitle;
@@ -249,7 +249,7 @@ class SpeedProviderSettings extends FormApplication {
 			.querySelectorAll(".drag-ruler-provider-settings")
 			.forEach(element => (element.style.display = "none"));
 		// Show the settings block for the currently selected module
-		document.getElementById(`drag-ruler.provider.${event.currentTarget.value}`).style.display = "";
+		document.getElementById(`drag-ruler-modern.provider.${event.currentTarget.value}`).style.display = "";
 
 		// Recalculate window height
 		this.element[0].style.height = null;
@@ -266,7 +266,7 @@ function enumerateProviderSettings(provider) {
 	const colorSettings = [];
 	const unreachableColor = {
 		id: "unreachable",
-		name: "drag-ruler.settings.speedProviderSettings.color.unreachable.name",
+		name: "drag-ruler-modern.settings.speedProviderSettings.color.unreachable.name",
 	};
 
 	// Resolve settings for the colors
@@ -275,12 +275,12 @@ function enumerateProviderSettings(provider) {
 		const colorName = color.name ? game.i18n.localize(color.name) : color.id;
 		let hint;
 		if (color === unreachableColor)
-			hint = game.i18n.localize("drag-ruler.settings.speedProviderSettings.color.unreachable.hint");
+			hint = game.i18n.localize("drag-ruler-modern.settings.speedProviderSettings.color.unreachable.hint");
 		else
-			hint = game.i18n.format("drag-ruler.settings.speedProviderSettings.color.hint", {colorName});
+			hint = game.i18n.format("drag-ruler-modern.settings.speedProviderSettings.color.hint", {colorName});
 		colorSettings.push({
 			id: `${provider.id}.color.${color.id}`,
-			name: game.i18n.format("drag-ruler.settings.speedProviderSettings.color.name", {colorName}),
+			name: game.i18n.format("drag-ruler-modern.settings.speedProviderSettings.color.name", {colorName}),
 			hint: hint,
 			type: Number,
 			value: toDomHex(
@@ -311,7 +311,7 @@ function enumerateProviderSettings(provider) {
 			settings.push(s);
 		} catch (e) {
 			console.warn(
-				`Drag Ruler | The following error occured while rendering setting "${setting.id}" of module/system "${this.id}. It won't be displayed.`,
+				`Drag Ruler Modern | The following error occured while rendering setting "${setting.id}" of module/system "${this.id}. It won't be displayed.`,
 			);
 			console.error(e);
 		}

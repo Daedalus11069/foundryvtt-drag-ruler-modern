@@ -1,6 +1,9 @@
 import {settingsKey} from "./settings.js";
 import {getMeasurePosition, setSnapParameterOnOptions} from "./util.js";
 
+// Get reference to the Ruler class for v13
+const Ruler = foundry.canvas.interaction.Ruler;
+
 // Indicates whether the user is currently pressing the button to disable snapping
 export let disableSnap = false;
 
@@ -75,6 +78,30 @@ export function registerKeybindings() {
 			restricted: !game.settings.get(settingsKey, "allowPathfinding"),
 		});
 	}
+
+	game.keybindings.register(settingsKey, "decreaseElevation", {
+		name: "drag-ruler.keybindings.decreaseElevation.name",
+		hint: "drag-ruler.keybindings.decreaseElevation.hint",
+		onDown: handleDecreaseElevation,
+		editable: [
+			{
+				key: "Minus",
+			},
+		],
+		precedence: -1,
+	});
+
+	game.keybindings.register(settingsKey, "increaseElevation", {
+		name: "drag-ruler.keybindings.increaseElevation.name",
+		hint: "drag-ruler.keybindings.increaseElevation.hint",
+		onDown: handleIncreaseElevation,
+		editable: [
+			{
+				key: "Equal",
+			},
+		],
+		precedence: -1,
+	});
 }
 
 function handleDeleteWaypoint() {
@@ -93,7 +120,7 @@ function handleCreateWaypoint() {
 	let options = {};
 	setSnapParameterOnOptions(ruler, options);
 
-	if (ruler._state === Ruler.STATES.INACTIVE) {
+	if (!ruler.waypoints || ruler.waypoints.length === 0) {
 		ruler.dragRulerStart(options);
 	} else {
 		ruler.dragRulerAddWaypoint(getMeasurePosition(), options);
@@ -113,7 +140,6 @@ function handleDisableSnap(event) {
 
 	const ruler = canvas.controls.ruler;
 	if (!ruler?.isDragRuler) return false;
-	if (ruler._state !== Ruler.STATES.MEASURING) return false;
 
 	ruler.measure(getMeasurePosition(), {snap: !disableSnap});
 	ruler.dragRulerSendState();
@@ -125,7 +151,6 @@ function handleMoveWithoutAnimation(event) {
 
 	const ruler = canvas.controls.ruler;
 	if (!ruler?.isDragRuler) return false;
-	if (ruler._state !== Ruler.STATES.MEASURING) return false;
 
 	ruler.measure(getMeasurePosition(), {snap: !disableSnap});
 	ruler.dragRulerSendState();
@@ -137,9 +162,50 @@ function handleTogglePathfinding(event) {
 
 	const ruler = canvas.controls.ruler;
 	if (!ruler?.isDragRuler) return false;
-	if (ruler._state !== Ruler.STATES.MEASURING) return false;
 
 	ruler.measure(getMeasurePosition(), {snap: !disableSnap});
 	ruler.dragRulerSendState();
 	return false;
+}
+
+async function handleDecreaseElevation() {
+	const controlled = canvas.tokens.controlled;
+	if (!controlled || controlled.length === 0) return false;
+
+	const gridDistance = canvas.scene.grid.distance;
+	
+	// Check if any token has an active ruler (being dragged)
+	for (const token of controlled) {
+		if (token.ruler && token._changeDragElevation) {
+			// During drag, use the token's elevation change method (like scroll wheel)
+			token._changeDragElevation(-1, {precise: false});
+		} else {
+			// When not dragging, persist to database
+			await token.document.update({
+				elevation: (token.document.elevation ?? 0) + gridDistance,
+			});
+		}
+	}
+	return true;
+}
+
+async function handleIncreaseElevation() {
+	const controlled = canvas.tokens.controlled;
+	if (!controlled || controlled.length === 0) return false;
+
+	const gridDistance = canvas.scene.grid.distance;
+	
+	// Check if any token has an active ruler (being dragged)
+	for (const token of controlled) {
+		if (token.ruler && token._changeDragElevation) {
+			// During drag, use the token's elevation change method (like scroll wheel)
+			token._changeDragElevation(1, {precise: false});
+		} else {
+			// When not dragging, persist to database
+			await token.document.update({
+				elevation: (token.document.elevation ?? 0) - gridDistance,
+			});
+		}
+	}
+	return true;
 }

@@ -1,11 +1,11 @@
 {
-	"id": "drag-ruler",
-	"title": "Drag Ruler",
+	"id": "drag-ruler-modern",
+	"title": "Drag Ruler Modern",
 	"description": "When dragging a token displays a ruler showing how far you've moved that token.",
-	"version": "1.13.8",
+	"version": "1.0.0",
 	"compatibility": {
-		"minimum": "11",
-		"verified": "11"
+		"minimum": "13",
+		"verified": "13.346"
 	},
 	"authors": [
 		{
@@ -24,14 +24,14 @@
 	],
 	"languages": [
 		{
-			"lang": "de",
-			"name": "Deutsch",
-			"path": "lang/de.json"
-		},
-		{
 			"lang": "en",
 			"name": "English",
 			"path": "lang/en.json"
+		},
+		{
+			"lang": "de",
+			"name": "Deutsch",
+			"path": "lang/de.json"
 		},
 		{
 			"lang": "es",
@@ -54,27 +54,37 @@
 			"path": "lang/ko.json"
 		},
 		{
-			"lang": "zh-tw",
-			"name": "正體中文",
-			"path": "lang/zh-tw.json"
+			"lang": "pt-BR",
+			"name": "Português (Brasil)",
+			"path": "lang/pt_BR.json"
 		},
 		{
-			"lang": "cn",
+			"lang": "zh-Hans",
 			"name": "中文（简体）",
 			"path": "lang/zh_Hans.json"
 		},
 		{
-			"lang": "pt-BR",
-			"name": "Português (Brasil)",
-			"path": "lang/pt_BR.json"
+			"lang": "zh-TW",
+			"name": "中文（繁體）",
+			"path": "lang/zh-tw.json"
 		}
 	],
 	"relationships": {
 		"requires": [
 			{
+				"id": "lib-wrapper",
+				"type": "module",
+				"compatibility": {
+					"minimum": "1.12.0"
+				}
+			},
+			{
 				"id": "socketlib",
 				"type": "module",
-				"manifest": "https://raw.githubusercontent.com/manuelVo/foundryvtt-socketlib/master/module.json"
+        "manifest": "https://raw.githubusercontent.com/manuelVo/foundryvtt-socketlib/master/module.json",
+        "compatibility": {
+          "verified": "1.1.3"
+        }
 			}
 		]
 	},

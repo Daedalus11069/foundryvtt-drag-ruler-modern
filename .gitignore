@@ -3,3 +3,4 @@ artifact/
 wasm/
 *.lock
 .vscode/
+/node_modules/

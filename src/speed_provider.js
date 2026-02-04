@@ -89,7 +89,7 @@ export class SpeedProvider {
 				throw e;
 			}
 			throw new Error(
-				`Drag Ruler | "${settingId}" is not a registered setting for "${this.id}". If you're the module/system developer, please add it to the return values of your Speed Providers "get settings()" function.`,
+				`Drag Ruler Modern | "${settingId}" is not a registered setting for "${this.id}". If you're the module/system developer, please add it to the return values of your Speed Providers "get settings()" function.`,
 			);
 		}
 	}
@@ -107,15 +107,15 @@ export class SpeedProvider {
 export class GenericSpeedProvider extends SpeedProvider {
 	get colors() {
 		return [
-			{id: "walk", default: 0x00ff00, name: "drag-ruler.genericSpeedProvider.speeds.walk"},
-			{id: "dash", default: 0xffff00, name: "drag-ruler.genericSpeedProvider.speeds.dash"},
+			{id: "walk", default: 0x00ff00, name: "drag-ruler-modern.genericSpeedProvider.speeds.walk"},
+			{id: "dash", default: 0xffff00, name: "drag-ruler-modern.genericSpeedProvider.speeds.dash"},
 		];
 	}
 
 	getRanges(token) {
 		const speedAttribute = this.getSetting("speedAttribute");
 		if (!speedAttribute) return [];
-		const tokenSpeed = parseFloat(getProperty(token, speedAttribute));
+		const tokenSpeed = parseFloat(foundry.utils.getProperty(token, speedAttribute));
 		if (tokenSpeed === undefined) {
 			console.warn(
 				`Drag Ruler (Generic Speed Provider) | The configured token speed attribute "${speedAttribute}" didn't return a speed value. To use colors based on drag distance set the setting to the correct value (or clear the box to disable this feature).`,
@@ -134,8 +134,8 @@ export class GenericSpeedProvider extends SpeedProvider {
 		return [
 			{
 				id: "speedAttribute",
-				name: "drag-ruler.genericSpeedProvider.settings.speedAttribute.name",
-				hint: "drag-ruler.genericSpeedProvider.settings.speedAttribute.hint",
+				name: "drag-ruler-modern.genericSpeedProvider.settings.speedAttribute.name",
+				hint: "drag-ruler-modern.genericSpeedProvider.settings.speedAttribute.hint",
 				scope: "world",
 				config: true,
 				type: String,
@@ -143,8 +143,8 @@ export class GenericSpeedProvider extends SpeedProvider {
 			},
 			{
 				id: "dashMultiplier",
-				name: "drag-ruler.genericSpeedProvider.settings.dashMultiplier.name",
-				hint: "drag-ruler.genericSpeedProvider.settings.dashMultiplier.hint",
+				name: "drag-ruler-modern.genericSpeedProvider.settings.dashMultiplier.name",
+				hint: "drag-ruler-modern.genericSpeedProvider.settings.dashMultiplier.hint",
 				scope: "world",
 				config: true,
 				type: Number,

@@ -32,24 +32,24 @@
 <form class="flexcol" autocomplete="off">
 	<section class="content">
 		<div class="settings-list">
-			<h2 class="module-header">{{localize "drag-ruler.settings.speedProviderSettings.headers.speedProvider"}}</h2>
+			<h2 class="module-header">{{localize "drag-ruler-modern.settings.speedProviderSettings.headers.speedProvider"}}</h2>
 			{{#if this.isGM}}
 				{{#with this.providerSelection}}
 					{{> settingPartial}}
 				{{/with}}
 			{{else}}
-				<div class="form-group"><label>{{localize "drag-ruler.settings.speedProviderSettings.activeProvider.name"}}</label><div class="form-fields" style="justify-content: flex-start;"><b>{{this.selectedProviderName}}</b></div></div>
-				<p class="notes">{{localize "drag-ruler.settings.speedProviderSettings.activeProvider.hint"}}</p>
+				<div class="form-group"><label>{{localize "drag-ruler-modern.settings.speedProviderSettings.activeProvider.name"}}</label><div class="form-fields" style="justify-content: flex-start;"><b>{{this.selectedProviderName}}</b></div></div>
+				<p class="notes">{{localize "drag-ruler-modern.settings.speedProviderSettings.activeProvider.hint"}}</p>
 			{{/if}}
-			<h2 class="module-header">{{localize "drag-ruler.settings.speedProviderSettings.headers.speedProviderSettings"}}</h2>
+			<h2 class="module-header">{{localize "drag-ruler-modern.settings.speedProviderSettings.headers.speedProviderSettings"}}</h2>
 			{{#each this.providers}}
-				<div class="drag-ruler-provider-settings" id="drag-ruler.provider.{{this.id}}" {{#unless this.isSelected}}style="display:none"{{/unless}}>
+				<div class="drag-ruler-modern-provider-settings" id="drag-ruler-modern.provider.{{this.id}}" {{#unless this.isSelected}}style="display:none"{{/unless}}>
 					{{#if this.hasSettings}}
 						{{#each settings}}
 							{{> settingPartial}}
 						{{/each}}
 					{{else}}
-						<p>{{localize "drag-ruler.settings.speedProviderSettings.noSettings"}}</p>
+						<p>{{localize "drag-ruler-modern.settings.speedProviderSettings.noSettings"}}</p>
 					{{/if}}
 				</div>
 			{{/each}}

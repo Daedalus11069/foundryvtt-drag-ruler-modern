@@ -1,5 +1,5 @@
 {
-	"drag-ruler": {
+	"drag-ruler-modern": {
 		"dependencies": {
 			"ok": "OK",
 			"terrain-ruler": {
@@ -44,6 +44,14 @@
 			"togglePathfinding": {
 				"name": "Wegfindung umschalten",
 				"hint": "Wenn diese Taste gedrückt gehalten wird, während ein Token gezogen wird, wird die Wegfindung vorübergehend aktiviert/deaktiviert."
+			},
+			"decreaseElevation": {
+				"name": "Höhe verringern",
+				"hint": "Verringert die Höhe der ausgewählten Token um die Rasterentfernung der Szene."
+			},
+			"increaseElevation": {
+				"name": "Höhe erhöhen",
+				"hint": "Erhöht die Höhe der ausgewählten Token um die Rasterentfernung der Szene."
 			}
 		},
 		"settings": {

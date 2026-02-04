@@ -1,5 +1,5 @@
 {
-	"drag-ruler": {
+	"drag-ruler-modern": {
 		"dependencies": {
 			"ok": "OK",
 			"terrain-ruler": {
@@ -44,6 +44,14 @@
 			"togglePathfinding": {
 				"name": "Toggle pathfinding",
 				"hint": "When being held while dragging a token, the pathfinding functionality will be temporarily enabled/disabled."
+			},
+			"decreaseElevation": {
+				"name": "Decrease elevation",
+				"hint": "Decrease the elevation of selected tokens by the scene's grid distance."
+			},
+			"increaseElevation": {
+				"name": "Increase elevation",
+				"hint": "Increase the elevation of selected tokens by the scene's grid distance."
 			}
 		},
 		"settings": {

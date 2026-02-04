@@ -1,5 +1,5 @@
 {
-	"drag-ruler": {
+	"drag-ruler-modern": {
 		"dependencies": {
 			"ok": "OK",
 			"terrain-ruler": {
@@ -44,6 +44,14 @@
 			"togglePathfinding": {
 				"name": "Activer la recherche de l'itinéraire",
 				"hint": "Lorsqu'elle est maintenue en glissant un jeton, la fonction de recherche de l'itinéraire sera temporairement activée/désactivée."
+			},
+			"decreaseElevation": {
+				"name": "Diminuer l'élévation",
+				"hint": "Diminue l'élévation des jetons sélectionnés de la distance de la grille de la scène."
+			},
+			"increaseElevation": {
+				"name": "Augmenter l'élévation",
+				"hint": "Augmente l'élévation des jetons sélectionnés de la distance de la grille de la scène."
 			}
 		},
 		"settings": {

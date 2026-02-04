@@ -51,7 +51,7 @@ export function measureDistances(segments, entity, shape, options = {}) {
 export function checkDependencies() {
 	if (!game.modules.get("socketlib")?.active) {
 		console.error(
-			"Drag Ruler | The `socketlib` module isn't enabled, but it's required for Drag Ruler to operate properly.",
+			"Drag Ruler Modern | The `socketlib` module isn't enabled, but it's required for Drag Ruler to operate properly.",
 		);
 		if (game.user.isGM) {
 			new Dialog({

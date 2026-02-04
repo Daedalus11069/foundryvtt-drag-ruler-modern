@@ -20,6 +20,9 @@ import {recalculate} from "./socket.js";
 import {SpeedProvider} from "./speed_provider.js";
 import {getEntityCenter, setSnapParameterOnOptions} from "./util.js";
 
+// Get reference to the Ruler class for v13
+const Ruler = foundry.canvas.interaction.Ruler;
+
 CONFIG.debug.dragRuler = false;
 export let debugGraphics = undefined;
 
@@ -27,10 +30,11 @@ Hooks.once("init", () => {
 	registerSettings();
 	registerKeybindings();
 	initApi();
-	hookDragHandlers(Token);
-	hookDragHandlers(MeasuredTemplate);
+	// Don't hook drag handlers - let Foundry handle waypoints natively
+	// hookDragHandlers(Token);
+	// hookDragHandlers(MeasuredTemplate);
 	libWrapper.register(
-		"drag-ruler",
+		"drag-ruler-modern",
 		"TokenLayer.prototype.undoHistory",
 		tokenLayerUndoHistory,
 		"WRAPPER",
@@ -56,16 +60,7 @@ Hooks.once("ready", () => {
 	if (CONFIG.debug.dragRuler) debugGraphics = canvas.controls.addChild(new PIXI.Container());
 });
 
-Hooks.on("canvasReady", () => {
-	canvas.controls.rulers.children.forEach(ruler => {
-		ruler.draggedEntity = null;
-		Object.defineProperty(ruler, "isDragRuler", {
-			get: function isDragRuler() {
-				return Boolean(this.draggedEntity) && this._state !== Ruler.STATES.INACTIVE;
-			},
-		});
-	});
-});
+// Canvas ready hook is now handled in ruler.js via the extendRuler function
 
 Hooks.on("getCombatTrackerEntryContext", function (html, menu) {
 	const entry = {
@@ -86,33 +81,33 @@ function forwardIfUnahndled(newFn) {
 function hookDragHandlers(entityType) {
 	const entityName = entityType.name;
 	libWrapper.register(
-		"drag-ruler",
+		"drag-ruler-modern",
 		`${entityName}.prototype._onDragLeftStart`,
 		onEntityLeftDragStart,
 		"WRAPPER",
 	);
 	if (entityType === Token)
 		libWrapper.register(
-			"drag-ruler",
+			"drag-ruler-modern",
 			`${entityName}.prototype._onDragLeftMove`,
 			onEntityLeftDragMoveSnap,
 			"WRAPPER",
 		);
 	else
 		libWrapper.register(
-			"drag-ruler",
+			"drag-ruler-modern",
 			`${entityName}.prototype._onDragLeftMove`,
 			onEntityLeftDragMove,
 			"WRAPPER",
 		);
 	libWrapper.register(
-		"drag-ruler",
+		"drag-ruler-modern",
 		`${entityName}.prototype._onDragLeftDrop`,
 		forwardIfUnahndled(onEntityDragLeftDrop),
 		"MIXED",
 	);
 	libWrapper.register(
-		"drag-ruler",
+		"drag-ruler-modern",
 		`${entityName}.prototype._onDragLeftCancel`,
 		forwardIfUnahndled(onEntityDragLeftCancel),
 		"MIXED",
@@ -134,7 +129,13 @@ async function tokenLayerUndoHistory(wrapped) {
 function onEntityLeftDragStart(wrapped, event) {
 	wrapped(event);
 	const isToken = this instanceof Token;
-	const ruler = canvas.controls.ruler;
+	// In v13, tokens have their own TokenRuler instance
+	const ruler = isToken ? this.ruler : canvas.controls.ruler;
+	if (!ruler) {
+		console.warn("drag-ruler: Ruler not available after drag start");
+		return;
+	}
+	
 	ruler.draggedEntity = this;
 	const entityCenter = getEntityCenter(this);
 	ruler.rulerOffset = {
@@ -155,14 +156,16 @@ function onEntityLeftDragMoveSnap(wrapped, event) {
 
 function onEntityLeftDragMove(wrapped, event) {
 	wrapped(event);
-	const ruler = canvas.controls.ruler;
-	if (ruler.isDragRuler) onMouseMove.call(ruler, event);
+	const isToken = this instanceof Token;
+	const ruler = isToken ? this.ruler : canvas.controls.ruler;
+	if (ruler?.isDragRuler) onMouseMove.call(ruler, event);
 }
 
 function onEntityDragLeftDrop(event) {
-	const ruler = canvas.controls.ruler;
-	if (!ruler.isDragRuler) {
-		ruler.draggedEntity = undefined;
+	const isToken = this instanceof Token;
+	const ruler = isToken ? this.ruler : canvas.controls.ruler;
+	if (!ruler?.isDragRuler) {
+		if (ruler) ruler.draggedEntity = undefined;
 		return false;
 	}
 	// When we're dragging a measured template no token will ever be selected,
@@ -170,27 +173,26 @@ function onEntityDragLeftDrop(event) {
 	const selectedTokens = canvas.tokens.controlled;
 	// This can happen if the user presses ESC during drag (maybe there are other ways too)
 	if (selectedTokens.length === 0) selectedTokens.push(ruler.draggedEntity);
-	// This can happen if the ruler is being dragged so rapidly that the drag move handler hasn't been called before dropping
-	if (ruler._state === Ruler.STATES.STARTING) onMouseMove.call(ruler, event);
-	ruler._state = Ruler.STATES.MOVING;
 	moveEntities.call(ruler, ruler.draggedEntity, selectedTokens);
 	return true;
 }
 
 function onEntityDragLeftCancel(event) {
 	// This function is invoked by right clicking
-	const ruler = canvas.controls.ruler;
-	if (!ruler.draggedEntity || ruler._state === Ruler.STATES.MOVING) return false;
+	const isToken = this instanceof Token;
+	const ruler = isToken ? this.ruler : canvas.controls.ruler;
+	if (!ruler?.draggedEntity) return false;
 
 	const rightClickAction = game.settings.get(settingsKey, "rightClickAction");
 	let options = {};
 	setSnapParameterOnOptions(ruler, options);
 
-	if (ruler._state === Ruler.STATES.INACTIVE) {
+	// If ruler not yet started, start it
+	if (!ruler.waypoints || ruler.waypoints.length === 0) {
 		if (rightClickAction !== RightClickAction.CREATE_WAYPOINT) return false;
 		ruler.dragRulerStart(options);
 		event.preventDefault();
-	} else if (ruler._state === Ruler.STATES.MEASURING) {
+	} else {
 		switch (rightClickAction) {
 			case RightClickAction.CREATE_WAYPOINT:
 				event.preventDefault();
@@ -208,9 +210,10 @@ function onEntityDragLeftCancel(event) {
 }
 
 function applyGridlessSnapping(event) {
-	const ruler = canvas.controls.ruler;
+	const isToken = this instanceof Token;
+	const ruler = isToken ? this.ruler : canvas.controls.ruler;
 	if (!game.settings.get(settingsKey, "useGridlessRaster")) return;
-	if (!ruler.isDragRuler) return;
+	if (!ruler?.isDragRuler) return;
 	if (disableSnap) return;
 	if (canvas.grid.type !== CONST.GRID_TYPES.GRIDLESS) return;
 

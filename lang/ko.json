@@ -1,5 +1,5 @@
 {
-	"drag-ruler": {
+	"drag-ruler-modern": {
 		"dependencies": {
 			"ok": "OK",
 			"terrain-ruler": {

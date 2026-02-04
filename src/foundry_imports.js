@@ -4,6 +4,9 @@ import {trackRays} from "./movement_tracking.js";
 import {recalculate} from "./socket.js";
 import {getSnapPointForToken, highlightTokenShape, sum} from "./util.js";
 
+// Get reference to the Ruler class for v13
+const Ruler = foundry.canvas.interaction.Ruler;
+
 // This is a modified version of Ruler.moveToken from foundry 0.7.9
 export async function moveEntities(draggedEntity, selectedEntities) {
 	let wasPaused = game.paused;
@@ -43,7 +46,6 @@ export async function moveEntities(draggedEntity, selectedEntities) {
 
 	// Execute the movement path.
 	// Transform each center-to-center ray into a top-left to top-left ray using the prior token offsets.
-	this._state = Ruler.STATES.MOVING;
 	await animateEntities.call(this, selectedEntities, draggedEntity, rays, wasPaused);
 
 	// Once all animations are complete we can clear the ruler
@@ -129,8 +131,6 @@ function applyOffsetToRay(ray, offset) {
 
 // This is a modified version of Ruler._onMouseMove from foundry 0.7.9
 export function onMouseMove(event) {
-	if (this._state === Ruler.STATES.MOVING) return;
-
 	// Extract event data
 	const destination = {
 		x: event.interactionData.destination.x + this.rulerOffset.x,
@@ -152,7 +152,6 @@ function scheduleMeasurement(destination, event) {
 	if (Date.now() - mt > measurementInterval) {
 		this.measure(destination, {snap: !disableSnap});
 		event._measureTime = Date.now();
-		this._state = Ruler.STATES.MEASURING;
 		cancelScheduledMeasurement.call(this);
 	} else {
 		this.deferredMeasurementData = {destination, event};

@@ -1,5 +1,5 @@
 {
-	"drag-ruler": {
+	"drag-ruler-modern": {
 		"I18N": {
 			"LANGUAGE": "Español",
 			"MAINTAINERS": "@Viriato139ac#0342"
@@ -48,6 +48,14 @@
 			"togglePathfinding": {
 				"name": "Conmutar búsqueda de camino",
 				"hint": "Cuando se presione al arrastrar un icono, la funcionalidad de búsqueda de camino será temporalmente habilitada/deshabilitada."
+			},
+			"decreaseElevation": {
+				"name": "Disminuir elevación",
+				"hint": "Disminuye la elevación de los tokens seleccionados por la distancia de la cuadrícula de la escena."
+			},
+			"increaseElevation": {
+				"name": "Aumentar elevación",
+				"hint": "Aumenta la elevación de los tokens seleccionados por la distancia de la cuadrícula de la escena."
 			}
 		},
 		"settings": {
