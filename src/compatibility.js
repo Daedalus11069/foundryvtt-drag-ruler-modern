@@ -44,6 +44,10 @@ export function measureDistances(segments, entity, shape, options = {}) {
 		if (!opts.ignoreGrid) {
 			opts.gridSpaces = true;
 		}
+		// Enable region movement cost calculation in v13
+		if (entity instanceof Token) {
+			opts.token = entity;
+		}
 		return canvas.grid.measureDistances(segments, opts);
 	}
 }

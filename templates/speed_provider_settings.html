@@ -53,6 +53,27 @@
 					{{/if}}
 				</div>
 			{{/each}}
+			
+			<h2 class="module-header">{{localize "drag-ruler-modern.settings.speedProviderSettings.movementTypes.header"}}</h2>
+			<p class="notes">{{localize "drag-ruler-modern.settings.speedProviderSettings.movementTypes.hint"}}</p>
+			<table style="width: 100%; margin-bottom: 1em;">
+				<thead>
+					<tr>
+						<th>{{localize "drag-ruler-modern.settings.speedProviderSettings.movementTypes.type"}}</th>
+						<th style="text-align: center;">{{localize "drag-ruler-modern.settings.speedProviderSettings.movementTypes.enabled"}}</th>
+						<th>{{localize "drag-ruler-modern.settings.speedProviderSettings.movementTypes.attribute"}}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{#each this.movementTypes}}
+					<tr>
+						<td><label for="{{key}}.enabled">{{name}}</label></td>
+						<td style="text-align: center;"><input type="checkbox" name="{{key}}.enabled" {{checked enabled}}/></td>
+						<td><input type="text" name="{{key}}.attribute" value="{{attribute}}" placeholder="actor.system.attributes.movement.{{key}}" style="width: 100%;"/></td>
+					</tr>
+					{{/each}}
+				</tbody>
+			</table>
 	</section>
 
 	<footer class="sheet-footer flexrow">

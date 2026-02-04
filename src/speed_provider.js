@@ -113,15 +113,34 @@ export class GenericSpeedProvider extends SpeedProvider {
 	}
 
 	getRanges(token) {
-		const speedAttribute = this.getSetting("speedAttribute");
-		if (!speedAttribute) return [];
-		const tokenSpeed = parseFloat(foundry.utils.getProperty(token, speedAttribute));
-		if (tokenSpeed === undefined) {
-			console.warn(
-				`Drag Ruler (Generic Speed Provider) | The configured token speed attribute "${speedAttribute}" didn't return a speed value. To use colors based on drag distance set the setting to the correct value (or clear the box to disable this feature).`,
-			);
-			return [];
+		// Check movement types first
+		const movementTypes = game.settings.get(settingsKey, "movementTypes");
+		let tokenSpeed = null;
+		
+		// Try to find an enabled movement type with a configured attribute
+		for (const [key, config] of Object.entries(movementTypes)) {
+			if (config.enabled && config.attribute) {
+				const speed = parseFloat(foundry.utils.getProperty(token, config.attribute));
+				if (speed !== undefined && !isNaN(speed)) {
+					tokenSpeed = speed;
+					break;
+				}
+			}
 		}
+		
+		// Fall back to speed attribute if no movement type matched
+		if (tokenSpeed === null) {
+			const speedAttribute = this.getSetting("speedAttribute");
+			if (!speedAttribute) return [];
+			tokenSpeed = parseFloat(foundry.utils.getProperty(token, speedAttribute));
+			if (tokenSpeed === undefined) {
+				console.warn(
+					`Drag Ruler (Generic Speed Provider) | The configured token speed attribute "${speedAttribute}" didn't return a speed value. To use colors based on drag distance set the setting to the correct value (or clear the box to disable this feature).`,
+				);
+				return [];
+			}
+		}
+		
 		const dashMultiplier = this.getSetting("dashMultiplier");
 		if (!dashMultiplier) return [{range: tokenSpeed, color: "walk"}];
 		return [

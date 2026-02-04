@@ -125,6 +125,47 @@ export function registerSettings() {
 		default: false,
 	});
 
+	// Movement type attribute paths
+	game.settings.register(settingsKey, "movementTypes", {
+		scope: "world",
+		config: false,
+		type: Object,
+		default: {
+			walk: {
+				enabled: true,
+				attribute: "",
+			},
+			fly: {
+				enabled: false,
+				attribute: "",
+			},
+			burrow: {
+				enabled: false,
+				attribute: "",
+			},
+			swim: {
+				enabled: false,
+				attribute: "",
+			},
+			climb: {
+				enabled: false,
+				attribute: "",
+			},
+			crawl: {
+				enabled: false,
+				attribute: "",
+			},
+			jump: {
+				enabled: false,
+				attribute: "",
+			},
+			teleport: {
+				enabled: false,
+				attribute: "",
+			},
+		},
+	});
+
 	// This setting will be modified by the api if modules register to it
 	game.settings.register(settingsKey, "speedProvider", {
 		scope: "world",
@@ -204,6 +245,15 @@ class SpeedProviderSettings extends FormApplication {
 			isSelect: true,
 			isRange: false,
 		};
+		
+		// Add movement types data
+		const movementTypes = game.settings.get(settingsKey, "movementTypes");
+		data.movementTypes = Object.entries(movementTypes).map(([key, value]) => ({
+			key,
+			name: game.i18n.localize(`drag-ruler-modern.movementTypes.${key}`),
+			...value,
+		}));
+		
 		return data;
 	}
 
@@ -211,6 +261,25 @@ class SpeedProviderSettings extends FormApplication {
 		const selectedSpeedProvider = game.user.isGM
 			? formData.speedProvider
 			: game.settings.get(settingsKey, "speedProvider");
+		
+		// Handle movement types separately
+		const movementTypes = {};
+		const movementKeys = ["walk", "fly", "burrow", "swim", "climb", "crawl", "jump", "teleport"];
+		for (const key of movementKeys) {
+			if (`${key}.enabled` in formData || `${key}.attribute` in formData) {
+				movementTypes[key] = {
+					enabled: formData[`${key}.enabled`] || false,
+					attribute: formData[`${key}.attribute`] || "",
+				};
+				delete formData[`${key}.enabled`];
+				delete formData[`${key}.attribute`];
+			}
+		}
+		if (Object.keys(movementTypes).length > 0) {
+			const existingMovementTypes = game.settings.get(settingsKey, "movementTypes");
+			await game.settings.set(settingsKey, "movementTypes", {...existingMovementTypes, ...movementTypes});
+		}
+		
 		for (let [key, value] of Object.entries(formData)) {
 			// Check if this is color, convert the value to an integer
 			const splitKey = key.split(".", 3);

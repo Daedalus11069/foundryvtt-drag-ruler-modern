@@ -51,7 +51,8 @@ export function extendRuler() {
 			// Apply colors if we have a token to measure from
 			if (this.draggedEntity || this.token) {
 				try {
-					const dist = waypoint?.measurement?.distance ?? 0;
+					// Use cost if available (includes region effects), otherwise fall back to distance
+					const dist = waypoint?.measurement?.cost ?? waypoint?.measurement?.distance ?? 0;
 					const color = this.dragRulerGetColorForDistance(dist);
 					if (color && color !== this.color) {
 						style.color = color;
@@ -76,7 +77,8 @@ export function extendRuler() {
 			
 			// TokenRuler is only used during token drag, always apply colors
 			try {
-				const dist = waypoint?.measurement?.distance ?? 0;
+			// Use cost if available (includes region effects), otherwise fall back to distance
+			const dist = waypoint?.measurement?.cost ?? waypoint?.measurement?.distance ?? 0;
 				const color = this.dragRulerGetColorForDistance(dist);
 				if (color && color !== this.color) {
 					style.color = color;
@@ -100,7 +102,8 @@ export function extendRuler() {
 			const style = wrapped.call(this, waypoint, offset) || {};
 			
 			try {
-				const dist = waypoint?.measurement?.distance ?? 0;
+				// Use cost if available (includes region effects), otherwise fall back to distance
+				const dist = waypoint?.measurement?.cost ?? waypoint?.measurement?.distance ?? 0;
 				const color = this.dragRulerGetColorForDistance(dist);
 				if (color && color !== this.color) {
 					style.color = color;
