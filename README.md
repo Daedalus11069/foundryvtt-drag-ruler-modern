@@ -1,7 +1,7 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/staebchenfisch)
-
-# Drag Ruler
+# Drag Ruler Modern
 This module shows a ruler when you drag a token or measurement template to inform you how far you've dragged it from its start point. Additionally, if you're using a grid, the spaces the token will travel though will be colored depending on your tokens speed. By default, three colors are being used: green for spaces that your token can reach by walking normally are colored green, spaces that can only be reached by dashing will be colored yellow and spaces that cannot be reached with the token's speed will be colored red. If you're using a gridless map the ruler color will change to convey this information.
+
+> **⚠️ Note:** This is a major rewrite for Foundry VTT v13. While core functionality is working, combat-related features (such as movement history during combat) have not been fully tested yet. Please report any issues you encounter.
 
 ![Drag Ruler being used on a square grids](https://raw.githubusercontent.com/manuelVo/foundryvtt-drag-ruler/709774b25f7dd818a90591165f74b3e6dbc788cc/media/basic_square.webp)
 ![Drag Ruler being used on a gridless scene](https://raw.githubusercontent.com/manuelVo/foundryvtt-drag-ruler/709774b25f7dd818a90591165f74b3e6dbc788cc/media/basic_gridless.webp)
@@ -9,19 +9,16 @@ This module shows a ruler when you drag a token or measurement template to infor
 
 
 ## Supports Tokens of all sizes
-Terrain ruler has excellent support for tokens of all sizes. The Ruler will always originate from the token's center and will always highlight all the squares that tokens move over.
+Drag Ruler has excellent support for tokens of all sizes. The Ruler will always originate from the token's center and will always highlight all the squares that tokens move over.
 
 ![Drag Ruler being used with a large token on a square grid](https://raw.githubusercontent.com/manuelVo/foundryvtt-drag-ruler/709774b25f7dd818a90591165f74b3e6dbc788cc/media/large_token_square.webp)
 ![Drag Ruler being used with a large token on a hex grid](https://raw.githubusercontent.com/manuelVo/foundryvtt-drag-ruler/709774b25f7dd818a90591165f74b3e6dbc788cc/media/large_token_hex.webp)
 
 
-## Difficult Terrain support
-**To use support for difficult terrain you must install the [Terrain Ruler](https://foundryvtt.com/packages/terrain-ruler) module**
+## Foundry Regions Support
+Drag Ruler Modern fully supports Foundry VTT v13's native region system. When tokens move through regions that modify movement cost (such as difficult terrain), the ruler colors automatically adjust to reflect the actual movement cost consumed. This means if a region doubles movement cost, you'll see shorter colored ranges indicating the reduced distance your token can travel.
 
-With the Terrain Ruler module installed, Drag Ruler is able to take difficult terrain that was placed down using the [Enhanced Terrain Layer](https://foundryvtt.com/packages/enhanced-terrain-layer) or [TerrainLayer](https://foundryvtt.com/packages/TerrainLayer) module into account.
-
-![Drag Ruler being used to measure distances over difficult terrain on square grid](https://raw.githubusercontent.com/manuelVo/foundryvtt-drag-ruler/709774b25f7dd818a90591165f74b3e6dbc788cc/media/difficult_terrain_square.webp)
-![Drag Ruler being used to measure distances over difficult terrain on gridless scenes](https://raw.githubusercontent.com/manuelVo/foundryvtt-drag-ruler/709774b25f7dd818a90591165f74b3e6dbc788cc/media/difficult_terrain_gridless.webp)
+The ruler uses Foundry's built-in region movement cost calculations, ensuring accurate measurement across all region types and behaviors configured in your world.
 
 
 ## Movement history (optional)
@@ -33,13 +30,9 @@ During combat, Drag Ruler will remember the path a token has taken during it's t
 
 
 ## Pathfinding
-**To use pathfinding you must install the [routinglib](https://foundryvtt.com/packages/routinglib) module**
+**Pathfinding is not currently supported in Drag Ruler Modern (v13)**
 
-When routinglib is installed, Drag Ruler can automatically place waypoints to walk around walls and terrain to reach the destination with the shortest possible movement. Pathfinding can be activated using a configurable key. Alternatively, Drag Ruler can be configured to always use pathfinding when a token is being dragged.
-
-Pathfinding is restricted to GM users by default, since the pathfinding algorithm can create ways that lead through unexplored fog of war. If you want to allow your players to use Drag Ruler's pathfinding functionality, you need to enable the associated setting in Drag Ruler's module settings.
-
-![Demonstration of pathfinding](https://raw.githubusercontent.com/manuelVo/foundryvtt-drag-ruler/a5de9bbf0a54a5bafaa53c786bed4379dc244253/media/pathfinding.webp)
+The pathfinding functionality available in previous versions of Drag Ruler is not yet implemented in this Foundry v13 release. Support for automatic pathfinding using routinglib may be added in a future update. For now, you can manually place waypoints using Control+click while dragging tokens.
 
 
 ## Game systems with Drag Ruler integration
@@ -79,13 +72,17 @@ Drag Ruler is available in the follwing languages:
 - Spanish (thanks to Viriato139ac#342)
 
 ## API
-*Audience: This paragraph is intended for module and system devleopers that want to add more complex behavior to Drag Ruler. If you just want to use this plugins features skip this paragraph.*
+*Audience: This paragraph is intended for module and system developers that want to add more complex behavior to Drag Ruler. If you just want to use this plugin's features skip this paragraph.*
 
-The path coloring behavior of Drag Ruler can be altered by modules and systems to allow for for more complex coloring than provided by default. This allows specifying custom colors, using more different colors than offered by default and performing more calculations for determining the colors (for example a token may only be allowd to run if it isn't waring armor). Doing so is simple. This paragraph will provide an example by showing an implementation of the api for a fictional game system, that contains everything you need to get started. Afterwards the code will be dissected into small parts and explained.
+The path coloring behavior of Drag Ruler can be altered by modules and systems to allow for more complex coloring than provided by default. This allows specifying custom colors, using more different colors than offered by default and performing more calculations for determining the colors (for example a token may only be allowed to run if it isn't wearing armor). Doing so is simple. This paragraph will provide an example by showing an implementation of the api for a fictional game system, that contains everything you need to get started. Afterwards the code will be dissected into small parts and explained.
+
+### Backwards Compatibility
+Drag Ruler Modern maintains backwards compatibility with integrations written for the legacy version. Both the `dragRuler.ready` hook and `window.dragRuler` global are supported. However, new integrations should use `dragRulerModern.ready` and `window.dragRulerModern` to avoid potential conflicts.
 
 ### Full example
 ```javascript
-Hooks.once("dragRuler.ready", (SpeedProvider) => {
+// Use dragRulerModern.ready for new integrations (recommended)
+Hooks.once("dragRulerModern.ready", (SpeedProvider) => {
     class FictionalGameSystemSpeedProvider extends SpeedProvider {
         get colors() {
             return [
@@ -96,17 +93,18 @@ Hooks.once("dragRuler.ready", (SpeedProvider) => {
         }
 
         getRanges(token) {
-            const baseSpeed = token.actor.data.speed
+            // Access actor data (v13 uses actor.system instead of actor.data)
+            const baseSpeed = token.actor.system.attributes.movement.walk
 
-			// A character can always walk it's base speed and dash twice it's base speed
+			// A character can always walk its base speed and dash twice its base speed
 			const ranges = [
 				{range: baseSpeed, color: "walk"},
 				{range: baseSpeed * 2, color: "dash"}
 			]
 
 			// Characters that aren't wearing armor are allowed to run with three times their speed
-			if (!token.actor.data.isWearingArmor) {
-				ranges.push({range: baseSpeed * 3, color: "dash"})
+			if (!token.actor.system.attributes.isWearingArmor) {
+				ranges.push({range: baseSpeed * 3, color: "run"})
 			}
 
             return ranges
@@ -117,13 +115,14 @@ Hooks.once("dragRuler.ready", (SpeedProvider) => {
 })
 ```
 
-### Exmplanation of the code
+### Explanation of the code
 ```javascript
-Hooks.once("dragRuler.ready", (SpeedProvider) => {
+// Use dragRulerModern.ready for new integrations (recommended)
+Hooks.once("dragRulerModern.ready", (SpeedProvider) => {
     class FictionalGameSystemSpeedProvider extends SpeedProvider {
 ```
 
-After Drag Ruler has initialized and is ready to receive API calls it will fire the `dragRuler.ready` event. This is the signal for your module/gamesystem that it can now register itself in Drag Ruler. To do this you'll need to implement a Speed Provider. The Hook will provide you with one Argument: The class `SpeedProvider`, which serves as base class for all speed providers. To implement a Speed Provider you create a subclass of `SpeedProvider`. Within that class you override functions of the base class to implement the functionality you need. The functions `colors` and `getRanges` must be overridden by all Speed Provider implementations. Overriding other functions of the Speed Provider is optional and can be done if you need additional functionality for your speed provider.
+After Drag Ruler has initialized and is ready to receive API calls it will fire the `dragRulerModern.ready` event (and `dragRuler.ready` for backwards compatibility). This is the signal for your module/game system that it can now register itself in Drag Ruler. To do this you'll need to implement a Speed Provider. The Hook will provide you with one Argument: The class `SpeedProvider`, which serves as base class for all speed providers. To implement a Speed Provider you create a subclass of `SpeedProvider`. Within that class you override functions of the base class to implement the functionality you need. The functions `colors` and `getRanges` must be overridden by all Speed Provider implementations. Overriding other functions of the Speed Provider is optional and can be done if you need additional functionality for your speed provider.
 
 ```javascript
         get colors() {
@@ -137,23 +136,24 @@ After Drag Ruler has initialized and is ready to receive API calls it will fire 
 
 The getter `colors` is one of the two functions that must be overridden by all implementations of `SpeedProvider`. It must return an array of all colors, that may be used by this speed provider. Each color must be an object and has three attributes:
 
-- *id*: A name for this color that identifies this color. It will be used in other functions within your speed provider to reference to this color. Ther must not be two colors with the same id.
+- *id*: A name for this color that identifies this color. It will be used in other functions within your speed provider to reference to this color. There must not be two colors with the same id.
 - *default*: The default color value that should be used by this color.
 - *name*: A human readable name for this color that will be used in the Speed Provider Settings dialog. Drag Ruler will try to internationalize this string. This field is optional, but it's highly recommended to use it.
 
 ```javascript
         getRanges(token) {
-            const baseSpeed = token.actor.data.speed
+            // Access actor data (v13 uses actor.system instead of actor.data)
+            const baseSpeed = token.actor.system.attributes.movement.walk
 
-			// A character can always walk it's base speed and dash twice it's base speed
+			// A character can always walk its base speed and dash twice its base speed
 			const ranges = [
 				{range: baseSpeed, color: "walk"},
 				{range: baseSpeed * 2, color: "dash"}
 			]
 
 			// Characters that aren't wearing armor are allowed to run with three times their speed
-			if (!token.actor.data.isWearingArmor) {
-				ranges.push({range: baseSpeed * 3, color: "dash"})
+			if (!token.actor.system.attributes.isWearingArmor) {
+				ranges.push({range: baseSpeed * 3, color: "run"})
 			}
 
             return ranges
@@ -164,13 +164,19 @@ The `getRanges` function is the second function that every Speed Provider must o
 - *range*: The maximum distance a token is allowed to move within this range
 - *color*: The id of the color that is used to represent this range. This id must match the id as defined in the `colors` getter.
 
+**Note for Foundry v13:** In v13, actor data has been moved from `actor.data` to `actor.system`. Make sure to use `token.actor.system` when accessing character attributes.
+
 ```javascript
     dragRuler.registerModule("my-module-id", FictionalGameSystemSpeedProvider)
+    // Or use dragRulerModern for new integrations (both work identically)
+    // dragRulerModern.registerModule("my-module-id", FictionalGameSystemSpeedProvider)
 ```
 
-This line registers the Speed Provider class that was just created with Drag Ruler. The paramter must be the id of the module you're writing. This id must exactly match the id specified in you manifest. As the second parameter the Speed Provider class that was just created is passed in.
+This line registers the Speed Provider class that was just created with Drag Ruler. The parameter must be the id of the module you're writing. This id must exactly match the id specified in your manifest. As the second parameter the Speed Provider class that was just created is passed in.
 
-If you're not writing a module but a game system use `dragRuler.registerSystem` instead of `dragRuler.registerModule.
+Both `dragRuler.registerModule` and `dragRulerModern.registerModule` work identically - use whichever you prefer.
+
+If you're not writing a module but a game system use `dragRuler.registerSystem` (or `dragRulerModern.registerSystem`) instead of `registerModule`.
 
 ### Additional capabilities of the API
 In addition to the basic capabilities of the API presented in the example above, Drag Ruler's API offers more capabilities, like adding settings to your Speed Provider. To learn more about additional capabilities refer to the documentation of the `SpeedProvider` base class in [speed_provider.js](src/speed_provider.js).

@@ -1,3 +1,38 @@
+# Drag Ruler Modern
+
+## 1.0.0
+### Breaking Changes
+- Complete rewrite for Foundry VTT v13 compatibility
+- Module ID changed to `drag-ruler-modern` to reflect new architecture
+- Minimum Foundry version is now v13
+- **Pathfinding is not currently supported** in this v13 release. Support for routinglib integration may be added in a future update
+
+### Architecture Changes
+- Rebuilt using libWrapper for minimal intervention approach
+- Removed custom waypoint management - now uses Foundry's native waypoint system
+- TokenRuler automatically provides token context in v13
+- Simplified state management by leveraging Foundry's built-in ruler functionality
+
+### New Features
+- **Movement Types Configuration**: Configure attribute paths for 8 movement types (walk, fly, burrow, swim, climb, crawl, jump, teleport)
+- **Elevation Control Keybindings**: Use `-` key to decrease and `=` key to increase token elevation by grid distance during drag
+- **Region Movement Cost Support**: Ruler colors now properly reflect region-based movement cost modifiers (e.g., difficult terrain)
+- **Integrated Settings**: Movement types are now configured within the Speed Provider Settings dialog
+
+### Technical Improvements
+- Uses `measurement.cost` instead of `measurement.distance` for accurate region-aware coloring
+- Passes token parameter to `canvas.grid.measureDistances()` for region calculations
+- Movement type attributes can be configured per-type and fall back to speed attribute if not defined
+- Control+click now works correctly for placing waypoints (native Foundry behavior preserved)
+
+### Compatibility
+- Compatible with Foundry VTT v13.346
+- Requires libWrapper 1.13.4.0+
+- Requires socketlib v1.1.3+
+
+
+# Drag Ruler (Legacy)
+
 ## 1.13.8
 ### Bugfixes
 - `getMovedDistanceFromToken` no longer returns incorrect values on gridless maps

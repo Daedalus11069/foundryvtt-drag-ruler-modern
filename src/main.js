@@ -51,12 +51,16 @@ Hooks.once("init", () => {
 		recalculate,
 		resetMovementHistory,
 	};
+	// Also expose as dragRulerModern for new integrations
+	window.dragRulerModern = window.dragRuler;
 });
 
 Hooks.once("ready", () => {
 	performMigrations();
 	checkDependencies();
-	Hooks.callAll("dragRuler.ready", SpeedProvider);
+	// Call both hooks for backwards compatibility
+	Hooks.callAll("dragRuler.ready", SpeedProvider); // Legacy hook for old integrations
+	Hooks.callAll("dragRulerModern.ready", SpeedProvider); // New hook for v13+
 	if (CONFIG.debug.dragRuler) debugGraphics = canvas.controls.addChild(new PIXI.Container());
 });
 
