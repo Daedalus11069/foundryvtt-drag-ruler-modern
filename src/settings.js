@@ -305,6 +305,28 @@ class SpeedProviderSettings extends FormApplication {
 
 		// Activate the configured speed provider
 		updateSpeedProvider();
+		
+		// Trigger recalculation of active rulers to apply new settings immediately
+		// Call recalculation directly (not through sockets) since we're updating locally
+		this._recalculateActiveRulers();
+	}
+	
+	_recalculateActiveRulers() {
+		// Clear cached ranges and force re-measure for any active rulers
+		// Check canvas.controls.ruler (main ruler)
+		const ruler = canvas?.controls?.ruler;
+		if (ruler?.waypoints?.length > 0 && ruler.dragRulerRecalculate) {
+			ruler.dragRulerRecalculate();
+		}
+		
+		// Also check all token rulers (v13+)
+		if (canvas?.tokens?.placeables) {
+			for (const token of canvas.tokens.placeables) {
+				if (token.ruler?.waypoints?.length > 0 && token.ruler.dragRulerRecalculate) {
+					token.ruler.dragRulerRecalculate();
+				}
+			}
+		}
 	}
 
 	activateListeners(html) {

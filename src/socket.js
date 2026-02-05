@@ -47,6 +47,18 @@ export function recalculate(tokens) {
 }
 
 function _socketRecalculate(tokenIds) {
+	// Check canvas.controls.ruler (main ruler)
 	const ruler = canvas.controls.ruler;
-	if (ruler.isDragRuler) ruler.dragRulerRecalculate(tokenIds);
+	if (ruler?.waypoints?.length > 0) {
+		ruler.dragRulerRecalculate(tokenIds);
+	}
+	
+	// Also check all token rulers (v13+)
+	if (canvas.tokens?.placeables) {
+		for (const token of canvas.tokens.placeables) {
+			if (token.ruler?.waypoints?.length > 0) {
+				token.ruler.dragRulerRecalculate(tokenIds);
+			}
+		}
+	}
 }

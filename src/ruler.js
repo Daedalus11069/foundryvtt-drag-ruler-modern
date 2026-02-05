@@ -158,6 +158,7 @@ export function extendRuler() {
 			}
 			
 			distance = Math.round(distance * 100) / 100;
+			// Cache ranges during a drag for performance, cleared on new drag
 			if (!this.dragRulerRanges) {
 				this.dragRulerRanges = getRangesFromSpeedProvider(token);
 			}
@@ -267,6 +268,9 @@ export function extendRuler() {
 			const token = this.draggedEntity ?? this.token;
 			if (tokenIds && !tokenIds.includes(token?.id)) return;
 			
+			// Clear cached ranges to force recalculation with new settings
+			this.dragRulerRanges = undefined;
+			
 			const waypoints = this.waypoints.filter(waypoint => !waypoint.isPrevious);
 			this.dragRulerClearWaypoints();
 			
@@ -278,7 +282,11 @@ export function extendRuler() {
 				this.dragRulerAddWaypoint(waypoint, {snap: false});
 			}
 			
-			if (this.measure) this.measure(this.destination);
+			// Force a re-measure with the last waypoint as destination
+			if (this.measure && waypoints.length > 0) {
+				const lastWaypoint = waypoints[waypoints.length - 1];
+				this.measure(lastWaypoint);
+			}
 			game.user.broadcastActivity({ruler: this});
 		};
 		
@@ -288,6 +296,9 @@ export function extendRuler() {
 			
 			const isToken = entity instanceof Token;
 			if (isToken && !currentSpeedProvider.usesRuler(entity)) return;
+			
+			// Clear cached ranges to get fresh values for this drag
+			this.dragRulerRanges = undefined;
 			
 			// Ensure waypoints array exists
 			if (!this.waypoints) this.waypoints = [];

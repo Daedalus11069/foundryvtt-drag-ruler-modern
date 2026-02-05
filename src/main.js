@@ -33,6 +33,21 @@ Hooks.once("init", () => {
 	// Don't hook drag handlers - let Foundry handle waypoints natively
 	// hookDragHandlers(Token);
 	// hookDragHandlers(MeasuredTemplate);
+	
+	// Hook token drag start to clear cached ranges
+	libWrapper.register(
+		"drag-ruler-modern",
+		"Token.prototype._onDragLeftStart",
+		function(wrapped, event) {
+			// Clear cached ranges on the token's ruler before drag starts
+			if (this.ruler) {
+				this.ruler.dragRulerRanges = undefined;
+			}
+			return wrapped(event);
+		},
+		"WRAPPER",
+	);
+	
 	libWrapper.register(
 		"drag-ruler-modern",
 		"TokenLayer.prototype.undoHistory",
@@ -141,6 +156,10 @@ function onEntityLeftDragStart(wrapped, event) {
 	}
 	
 	ruler.draggedEntity = this;
+	
+	// Clear cached ranges at the start of drag to get fresh settings
+	ruler.dragRulerRanges = undefined;
+	
 	const entityCenter = getEntityCenter(this);
 	ruler.rulerOffset = {
 		x: entityCenter.x - event.interactionData.origin.x,
