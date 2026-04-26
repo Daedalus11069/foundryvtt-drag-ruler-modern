@@ -37,7 +37,7 @@ Hooks.once("init", () => {
 	// Hook token drag start to clear cached ranges
 	libWrapper.register(
 		"drag-ruler-modern",
-		"Token.prototype._onDragLeftStart",
+		"foundry.canvas.placeables.Token.prototype._onDragLeftStart",
 		function(wrapped, event) {
 			// Clear cached ranges on the token's ruler before drag starts
 			if (this.ruler) {
@@ -50,7 +50,7 @@ Hooks.once("init", () => {
 	
 	libWrapper.register(
 		"drag-ruler-modern",
-		"TokenLayer.prototype.undoHistory",
+		"foundry.canvas.layers.TokenLayer.prototype.undoHistory",
 		tokenLayerUndoHistory,
 		"WRAPPER",
 	);
@@ -105,7 +105,7 @@ function hookDragHandlers(entityType) {
 		onEntityLeftDragStart,
 		"WRAPPER",
 	);
-	if (entityType === Token)
+	if (entityType === foundry.canvas.placeables.Token)
 		libWrapper.register(
 			"drag-ruler-modern",
 			`${entityName}.prototype._onDragLeftMove`,
@@ -147,7 +147,7 @@ async function tokenLayerUndoHistory(wrapped) {
 
 function onEntityLeftDragStart(wrapped, event) {
 	wrapped(event);
-	const isToken = this instanceof Token;
+	const isToken = this instanceof foundry.canvas.placeables.Token;
 	// In v13, tokens have their own TokenRuler instance
 	const ruler = isToken ? this.ruler : canvas.controls.ruler;
 	if (!ruler) {
@@ -179,13 +179,13 @@ function onEntityLeftDragMoveSnap(wrapped, event) {
 
 function onEntityLeftDragMove(wrapped, event) {
 	wrapped(event);
-	const isToken = this instanceof Token;
+	const isToken = this instanceof foundry.canvas.placeables.Token;
 	const ruler = isToken ? this.ruler : canvas.controls.ruler;
 	if (ruler?.isDragRuler) onMouseMove.call(ruler, event);
 }
 
 function onEntityDragLeftDrop(event) {
-	const isToken = this instanceof Token;
+	const isToken = this instanceof foundry.canvas.placeables.Token;
 	const ruler = isToken ? this.ruler : canvas.controls.ruler;
 	if (!ruler?.isDragRuler) {
 		if (ruler) ruler.draggedEntity = undefined;
@@ -202,7 +202,7 @@ function onEntityDragLeftDrop(event) {
 
 function onEntityDragLeftCancel(event) {
 	// This function is invoked by right clicking
-	const isToken = this instanceof Token;
+	const isToken = this instanceof foundry.canvas.placeables.Token;
 	const ruler = isToken ? this.ruler : canvas.controls.ruler;
 	if (!ruler?.draggedEntity) return false;
 
@@ -233,7 +233,7 @@ function onEntityDragLeftCancel(event) {
 }
 
 function applyGridlessSnapping(event) {
-	const isToken = this instanceof Token;
+	const isToken = this instanceof foundry.canvas.placeables.Token;
 	const ruler = isToken ? this.ruler : canvas.controls.ruler;
 	if (!game.settings.get(settingsKey, "useGridlessRaster")) return;
 	if (!ruler?.isDragRuler) return;
