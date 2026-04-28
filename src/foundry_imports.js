@@ -4,8 +4,9 @@ import {trackRays} from "./movement_tracking.js";
 import {recalculate} from "./socket.js";
 import {getSnapPointForToken, highlightTokenShape, sum} from "./util.js";
 
-// Get reference to the Ruler class for v13
+// Get references to the classes for v13
 const Ruler = foundry.canvas.interaction.Ruler;
+const Token = foundry.canvas.placeables.Token;
 
 // This is a modified version of Ruler.moveToken from foundry 0.7.9
 export async function moveEntities(draggedEntity, selectedEntities) {

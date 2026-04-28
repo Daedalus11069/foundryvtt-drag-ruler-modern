@@ -2,6 +2,9 @@ import {buildCostFunction} from "./api.js";
 import {settingsKey} from "./settings.js";
 import {highlightTokenShape} from "./util.js";
 
+// Get reference to Token class for v13
+const Token = foundry.canvas.placeables.Token;
+
 export function highlightMeasurementTerrainRuler(
 	ray,
 	startDistance,

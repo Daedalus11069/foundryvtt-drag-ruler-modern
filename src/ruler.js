@@ -20,8 +20,9 @@ import {
 } from "./util.js";
 import {getPointer} from "./util.js";
 
-// Get reference to the Ruler class for v13
+// Get references to the classes for v13
 const Ruler = foundry.canvas.interaction.Ruler;
+const Token = foundry.canvas.placeables.Token;
 
 export function extendRuler() {
 	// In Foundry v13+, we use libWrapper to extend the ruler functionality

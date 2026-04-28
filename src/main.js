@@ -20,9 +20,6 @@ import {recalculate} from "./socket.js";
 import {SpeedProvider} from "./speed_provider.js";
 import {getEntityCenter, setSnapParameterOnOptions} from "./util.js";
 
-// Get reference to the Ruler class for v13
-const Ruler = foundry.canvas.interaction.Ruler;
-
 CONFIG.debug.dragRuler = false;
 export let debugGraphics = undefined;
 

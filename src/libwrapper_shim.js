@@ -18,6 +18,53 @@ Hooks.once("init", () => {
 	// Check if the real module is already loaded - if so, use it
 	if (globalThis.libWrapper && !(globalThis.libWrapper.is_fallback ?? true)) {
 		libWrapper = globalThis.libWrapper;
+		
+		// Wrap the register method to handle v13 deprecation warnings
+		const originalRegister = libWrapper.register.bind(libWrapper);
+		libWrapper.register = function(package_id, target, fn, type, options) {
+			// Temporarily suppress deprecation warnings during registration
+			// This is needed because libWrapper may access deprecated globals when resolving paths
+			const originalWarn = console.warn;
+			const originalError = console.error;
+			
+			const suppressDeprecation = function(...args) {
+				// Convert all arguments to string for checking
+				const message = args.map(arg => {
+					if (arg instanceof Error) return arg.message;
+					return String(arg);
+				}).join(' ');
+				// Only suppress the specific Token/TokenLayer deprecation warnings
+				if ((message.includes('global "Token"') || message.includes('global "TokenLayer"')) &&
+					message.includes('Deprecated since Version 13')) {
+					return; // Suppress this warning
+				}
+				// Pass through all other warnings/errors
+				return originalWarn.apply(console, args);
+			};
+			
+			const suppressDeprecationError = function(...args) {
+				const message = args.map(arg => {
+					if (arg instanceof Error) return arg.message;
+					return String(arg);
+				}).join(' ');
+				if ((message.includes('global "Token"') || message.includes('global "TokenLayer"')) &&
+					message.includes('Deprecated since Version 13')) {
+					return; // Suppress this error
+				}
+				return originalError.apply(console, args);
+			};
+			
+			console.warn = suppressDeprecation;
+			console.error = suppressDeprecationError;
+			
+			try {
+				return originalRegister(package_id, target, fn, type, options);
+			} finally {
+				console.warn = originalWarn;
+				console.error = originalError;
+			}
+		};
+		
 		return;
 	}
 
