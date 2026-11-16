@@ -14,8 +14,13 @@ function initTrackingFlag(combatant) {
 	}
 }
 
+// Combat#getCombatantByToken is deprecated; the plural version returns an array
+function getCombatantForToken(combat, token) {
+	return combat.getCombatantsByToken(token.id)[0];
+}
+
 function getInitializedCombatant(token, combat) {
-	const combatant = combat.getCombatantByToken(token.id);
+	const combatant = getCombatantForToken(combat, token);
 	if (!combatant) return undefined;
 	initTrackingFlag(combatant);
 	return combatant;
@@ -69,9 +74,9 @@ function calculateUpdate(combat, token, rays) {
 export function getMovementHistory(token) {
 	const combat = game.combat;
 	if (!combat) return [];
-	const combatant = combat.getCombatantsByToken(token.id);
+	const combatant = getCombatantForToken(combat, token);
 	if (!combatant) return [];
-	const dragRulerFlags = combatant.flags.dragRuler;
+	const dragRulerFlags = combatant.flags?.dragRuler;
 	if (!dragRulerFlags) return [];
 	if (combat.round > dragRulerFlags.trackedRound) return [];
 	return dragRulerFlags.passedWaypoints ?? [];
@@ -86,7 +91,8 @@ export async function removeLastHistoryEntryIfAt(token, x, y) {
 	}
 	history.pop();
 	const combat = game.combat;
-	const combatant = combat.getCombatantByToken(token.id);
+	const combatant = getCombatantForToken(combat, token);
+	if (!combatant) return;
 	await updateCombatantDragRulerFlags(combat, [
 		{_id: combatant.id, dragRulerFlags: combatant.flags.dragRuler},
 	]);

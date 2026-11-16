@@ -147,9 +147,10 @@ function hookDragHandlers(entityType) {
 async function tokenLayerUndoHistory(wrapped) {
 	const historyEntry = this.history[this.history.length - 1];
 	const returnValue = await wrapped();
-	if (historyEntry.type === "update") {
+	if (historyEntry?.type === "update") {
 		for (const entry of historyEntry.data) {
 			const token = canvas.tokens.get(entry._id);
+			if (!token) continue;
 			removeLastHistoryEntryIfAt(token, entry.x, entry.y);
 		}
 	}
